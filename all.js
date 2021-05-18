@@ -22,11 +22,14 @@ function login() { // 取出 token 並將 token 存入 cookie
     // Post 發送登入請求
     axios.post(`${url}admin/signin`, data)
         .then((res) => {
-            console.log(res.data);
+            // console.log(res.data);
             if (res.data.success) {
                 const { token, expired } = res.data; // 解構賦值
                 // console.log(token, expired);
                 document.cookie = `myToken=${token}; expires=${new Date(expired)}; path=/`;
+                alert(res.data.message);
+            } else {
+                alert(res.data.message);
             }
         })
 }
@@ -41,7 +44,7 @@ const app = {
                 // console.log(res);
                 if (res.data.success) {
                     this.data.products = res.data.products;
-                    console.log(this.data.products);
+                    // console.log(this.data.products);
                     this.render();
                 }
             })
@@ -76,7 +79,7 @@ const app = {
 
         axios.delete(`${url}api/${path}/admin/product/${id}`)
             .then((res) => {
-                console.log(res);
+                // console.log(res);
                 app.getData();
             })
     },
