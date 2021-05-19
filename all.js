@@ -11,16 +11,17 @@ const loginBtn = document.querySelector('#login');
 // 事件監聽
 loginBtn.addEventListener('click', login);
 function login() { // 取出 token 並將 token 存入 cookie
-    const username = usernameInput.value;
-    const password = passwordInput.value;
+    let username = usernameInput.value;
+    let password = passwordInput.value;
 
     const data = {
         "username": username, // 相同可縮寫
         "password": password
     }
 
-    // Post 發送登入請求
-    axios.post(`${url}admin/signin`, data)
+    if (username !== '' && password !== '') {
+        // Post 發送登入請求
+        axios.post(`${url}admin/signin`, data)
         .then((res) => {
             // console.log(res.data);
             if (res.data.success) {
@@ -28,10 +29,20 @@ function login() { // 取出 token 並將 token 存入 cookie
                 // console.log(token, expired);
                 document.cookie = `myToken=${token}; expires=${new Date(expired)}; path=/`;
                 alert(res.data.message);
+
+                app.init(); // 登入成功後取得產品列表
+                usernameInput.value = ''; // ? 請問這裡寫成 username = '' 為什麼沒辦法清空輸入的值呢?
+                passwordInput.value = '';
             } else {
                 alert(res.data.message);
+                usernameInput.value = '';
+                passwordInput.value = '';
             }
         })
+
+    } else {
+        alert('帳號密碼不能為空白');
+    }
 }
 
 const app = {
@@ -58,7 +69,7 @@ const app = {
                     <td>${item.title}</td>
                     <td>${item.origin_price}</td>
                     <td>${item.price}</td>
-                    <td>${item.is_enabled}</td>
+                    <td>${item.is_enabled? '已啟用': '尚未啟用'}</td>
                     <td>
                         <button type="button" class="btn btn-danger btn-sm" data-id="${item.id}" id="deleteBtn">
                             刪除
@@ -92,4 +103,4 @@ const app = {
         this.getData();
     }
 }
-app.init();
+// app.init();
